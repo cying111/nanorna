@@ -348,6 +348,7 @@ if (params.skipvis != true){
   }
 }
 
+/*
 custom_runName = params.name
 if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
   custom_runName = workflow.runName
@@ -419,10 +420,10 @@ ${summary.collect { k,v -> "            <dt>$k</dt><dd><samp>${v ?: '<span style
    return yaml_file
 }
 
-
+*/
 /*
  * Parse software version numbers
- */
+
 process get_software_versions {
     publishDir "${params.outdir}/pipeline_info", mode: 'copy',
     saveAs: {filename ->
@@ -445,11 +446,11 @@ process get_software_versions {
     """
 }
 
-
+*/
 
 /*
  * STEP 1 - FastQC
- */
+
 process fastqc {
     tag "$name"
     publishDir "${params.outdir}/fastqc", mode: 'copy',
@@ -468,10 +469,10 @@ process fastqc {
 }
 
 
-
+*/
 /*
  * STEP 2 - MultiQC
- */
+
 process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
@@ -497,10 +498,10 @@ process multiqc {
 }
 
 
-
+*/
 /*
  * STEP 3 - Output Description HTML
- */
+
 process output_documentation {
     publishDir "${params.outdir}/pipeline_info", mode: 'copy'
 
@@ -516,11 +517,11 @@ process output_documentation {
     """
 }
 
-
+ */
 
 /*
  * Completion e-mail notification
- */
+
 workflow.onComplete {
 
     // Set up the e-mail variables
@@ -672,3 +673,4 @@ def checkHostname(){
         }
     }
 }
+ */
