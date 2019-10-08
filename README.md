@@ -1,4 +1,4 @@
-# nf-core/nanorna
+# lwratten/nanorna
 
 **Alignment and visualisation of nanopore directRNA, direct cDNA and amplified cDNA data**.
 
