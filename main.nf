@@ -116,7 +116,7 @@ if (params.directRNA && !params.cDNA && !params.custom){
   exit 1, "Invalid option: --directRNA OR --cDNA OR --custom"
 }
 
-println("chromosome sizes = $params.chrSizes, skipvis = $params.skipvis")
+// println("chromosome sizes = $params.chrSizes, skipvis = $params.skipvis")
 if (!params.chrSizes  && !params.skipvis){
   process getChrSizes {
     publishDir "${params.outdir}/chrSizes", mode: 'copy'
