@@ -117,28 +117,30 @@ if (params.directRNA && !params.cDNA && !params.custom){
 }
 
 // println("chromosome sizes = $params.chrSizes, skipvis = $params.skipvis")
-if (!params.chrSizes  && !params.skipvis){
-  process getChrSizes {
-    publishDir "${params.outdir}/chrSizes", mode: 'copy'
+process getChrSizes {
+  // publishDir "${params.outdir}/chrSizes", mode: 'copy'
 
-    input:
-    file genome from refgenome
+  input:
+  file genome from refgenome
 
-    output:
-    file("${genome.simpleName}.chrSizes.txt") into chrsize_ch1, chrsize_ch2
-    file("${genome.baseName}.chrSizes.ucsc.txt") into ucsc_chrsize_ch1, ucsc_chrsize_ch2
+  output:
+  file "${genome.simpleName}.chrSizes.txt" into chrsize_ch1, chrsize_ch2
+  file "${genome.baseName}.chrSizes.ucsc.txt" into ucsc_chrsize_ch1, ucsc_chrsize_ch2
 
-    script:
-    """
-    samtools faidx ${genome} > ${genome}.fai
-    cut -f1,2 ${genome}.fai > ${genome.simpleName}.chrSizes.txt
-    bin/formatUCSC.pl ${genome.simpleName}.chrSizes.txt > \
-    ${genome.baseName}.chrSizes.ucsc.txt
-    """
-  }
-} else if (params.chrSizes && !params.skipvis){
-  chrSizes = file(params.chrSizes, checkIfExists: true)
+  script:
+  """
+  samtools faidx ${genome} > ${genome}.fai
+  cut -f1,2 ${genome}.fai > ${genome.simpleName}.chrSizes.txt
+  formatUCSC.pl ${genome.simpleName}.chrSizes.txt > \
+  ${genome.baseName}.chrSizes.ucsc.txt
+  """
 }
+// if (!params.chrSizes  && !params.skipvis){
+//
+// } else if (params.chrSizes && !params.skipvis){
+//   chrsize_ch1 = Channel.from(file(params.chrSizes, checkIfExists: true))
+//   chrsize_ch2 = chrsize_ch1
+// }
 
 juncbed = ""
 if (params.juncbed == true)
@@ -286,7 +288,7 @@ if (params.skipvis != true){
     publishDir "${params.outdir}", mode: 'copy'
     input:
     file bedgraph from bedgraph_ch
-    file chrSizes from chr_size_ch1
+    file chrSizes from chrsize_ch1
 
     output:
     file "*.bw" into bw_ch
@@ -320,7 +322,7 @@ if (params.skipvis != true){
 
     input:
     file bed12 from sorted_bed12_ch
-    file chrSizes from chr_size_ch2
+    file chrSizes from chrsize_ch2
 
     output:
     file "*.bb" into bb_ch
