@@ -264,7 +264,7 @@ if (params.skipvis != true){
 
     script:
     """
-    bin/formatUCSC.pl $bed12 > ${bed12.baseName}.ucsc.bed12
+    formatUCSC.pl $bed12 > ${bed12.baseName}.ucsc.bed12
     bedtools sort -i ${bed12.baseName}.ucsc.bed12 > ${bed12.baseName}.sorted.ucsc.bed12
     """
   }
@@ -311,7 +311,7 @@ if (params.skipvis != true){
 
     script:
     """
-    bin/formatUCSC.pl $bedgraph > ${bedgraph.baseName}.ucsc.bedgraph
+    formatUCSC.pl $bedgraph > ${bedgraph.baseName}.ucsc.bedgraph
     bedSort ${bedgraph.baseName}.ucsc.bedgraph ${bedgraph.baseName}.ucsc.bedgraph
     bedGraphToBigWig ${bedgraph.baseName}.ucsc.bedgraph $ucscChrSize ${bedgraph.baseName}.ucsc.bw
     """
