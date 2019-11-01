@@ -68,7 +68,7 @@ if (params.ref.endsWith('.fa') || params.ref.endsWith('.fa.gz')) {
 
 
 // if no alignment flag called
-if (!params.directRNA && !params.cDNA && && !params.DNA !params.custom){
+if (!params.directRNA && !params.cDNA && !params.DNA !params.custom){
   exit 1, "No input (directRNA, cDNA, DNA or custom)."
 }
 
