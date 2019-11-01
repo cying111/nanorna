@@ -26,6 +26,7 @@ def helpMessage() {
     And at least one of the following
       --directRNA                   A fastq file containing direct RNA. A gzipped file type can also be passed as an argument
       --cDNA                        A fastq (or gzipped) file containing data from either PCR-cDNA or direct cDNA.
+      --DNA                        A fastq (or gzipped) file containing data from DNA.
       --custom                      Enter custom command line flags for minimap2 alignment.
                                     No error checking is performed on command line input for custom option, so please manually test on a small dataset first.
                                     Enter command line input surrounded in single quotesfollowed by desired files, all space separated.
@@ -67,13 +68,13 @@ if (params.ref.endsWith('.fa') || params.ref.endsWith('.fa.gz')) {
 
 
 // if no alignment flag called
-if (!params.directRNA && !params.cDNA && !params.custom){
-  exit 1, "No input (directRNA, cDNA or custom)."
+if (!params.directRNA && !params.cDNA && && !params.DNA !params.custom){
+  exit 1, "No input (directRNA, cDNA, DNA or custom)."
 }
 
 // if flag used but no files given
 // True is stored in param if it is called but no variable assigned
-if (params.directRNA == true || params.cDNA == true || params.custom == true){
+if (params.directRNA == true || params.cDNA == true || params.custom == true || params.DNA == true){
   exit 1, "Parameter used but no files named."
 }
 
@@ -99,6 +100,10 @@ if (params.directRNA && !params.cDNA && !params.custom){
   cDNAList = params.cDNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(cDNAList, checkIfExists: true)
   minimap2call = "-ax splice -uf"
+} else if (params.DNA){
+  dnaList = params.DNA.split(" ").collect{file(it)}
+  file_ch = Channel.fromPath(dnaList, checkIfExists: true)
+  minimap2call = "-ax map-ont"
 } else if (params.custom && !params.cDNA && !params.directRNA){
   list = params.custom.split("'")
   println(list)
