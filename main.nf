@@ -99,7 +99,7 @@ if (params.directRNA && !params.cDNA && !params.custom){
 } else if (params.cDNA && !params.directRNA && !params.custom){
   cDNAList = params.cDNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(cDNAList, checkIfExists: true)
-  minimap2call = "-ax splice -uf"
+  minimap2call = "-ax splice"
 } else if (params.DNA){
   dnaList = params.DNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(dnaList, checkIfExists: true)
