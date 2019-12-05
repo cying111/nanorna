@@ -16,13 +16,10 @@ def helpMessage() {
     ============================================================================================
     Usage:
     The typical command for running the pipeline is as follows:
-    nextflow run nanorna --directRNA "file1 file2" --ref "reference_genome. " --bed12 "file "[--ram int] [--threads int]"
+    nextflow run nanorna --directRNA "file1 file2" --ref "reference_genome. " [--ram int] [--threads int]"
     Mandatory arguments
       --ref                         The reference genome file
       --outdir                      Absolute path to directory to output data (default is within nextflow process folder)
-      --bed12                       Bed12 file to use with the --bed-junc flag in order to improve Alignment
-                                    n.b. You can generate the bed12 file using "k8 ./paftools.js gff2bed genomeAnnotationFile.gtf"
-                                    (requires the k8 javascript shell to run)
     And at least one of the following
       --directRNA                   A fastq file containing direct RNA. A gzipped file type can also be passed as an argument
       --cDNA                        A fastq (or gzipped) file containing data from either PCR-cDNA or direct cDNA.
@@ -93,13 +90,13 @@ if (params.aligner == "graphmap2" && params.index){
 minimap2call = ""
 index = ""
 if (params.directRNA && !params.cDNA && !params.custom){
-  minimap2call = "-ax splice -uf -k14"
+  minimap2call = "-ax map-ont -uf -k14"
   directRNAList = params.directRNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(directRNAList, checkIfExists: true)
 } else if (params.cDNA && !params.directRNA && !params.custom){
   cDNAList = params.cDNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(cDNAList, checkIfExists: true)
-  minimap2call = "-ax splice"
+  minimap2call = "-ax map-ont"
 } else if (params.DNA){
   dnaList = params.DNA.split(" ").collect{file(it)}
   file_ch = Channel.fromPath(dnaList, checkIfExists: true)
@@ -122,24 +119,24 @@ if (params.directRNA && !params.cDNA && !params.custom){
 }
 
 // println("chromosome sizes = $params.chrSizes, skipvis = $params.skipvis")
-process getChrSizes {
-  // publishDir "${params.outdir}/chrSizes", mode: 'copy'
-
-  input:
-  file genome from refgenome
-
-  output:
-  file "${genome.simpleName}.chrSizes.txt" into chrsize_ch1, chrsize_ch2
-  file "${genome.baseName}.chrSizes.ucsc.txt" into ucsc_chrsize_ch1, ucsc_chrsize_ch2
-
-  script:
-  """
-  samtools faidx ${genome} > ${genome}.fai
-  cut -f1,2 ${genome}.fai > ${genome.simpleName}.chrSizes.txt
-  formatUCSC.pl ${genome.simpleName}.chrSizes.txt > \
-  ${genome.baseName}.chrSizes.ucsc.txt
-  """
-}
+// process getChrSizes {
+//   // publishDir "${params.outdir}/chrSizes", mode: 'copy'
+//
+//   input:
+//   file genome from refgenome
+//
+//   output:
+//   file "${genome.simpleName}.chrSizes.txt" into chrsize_ch1, chrsize_ch2
+//   file "${genome.baseName}.chrSizes.ucsc.txt" into ucsc_chrsize_ch1, ucsc_chrsize_ch2
+//
+//   script:
+//   """
+//   samtools faidx ${genome} > ${genome}.fai
+//   cut -f1,2 ${genome}.fai > ${genome.simpleName}.chrSizes.txt
+//   formatUCSC.pl ${genome.simpleName}.chrSizes.txt > \
+//   ${genome.baseName}.chrSizes.ucsc.txt
+//   """
+// }
 // if (!params.chrSizes  && !params.skipvis){
 //
 // } else if (params.chrSizes && !params.skipvis){
@@ -220,7 +217,7 @@ process sam2bam {
   file sam from sam_ch
 
   output:
-  file "*.bam" into indexbam_ch, bam2bed12_ch, bam2bedgraph_ch, bam2bigwig_ucsc_ch
+  file "*.bam" into indexbam_ch
 
   script:
   """
@@ -242,7 +239,7 @@ process indexbam {
   samtools index $bam
   """
 }
-
+/*
 if (params.skipvis != true){
   process bam2bed12 {
     input:
@@ -354,7 +351,7 @@ if (params.skipvis != true){
     """
   }
 }
-
+*/
 /*
 custom_runName = params.name
 if( !(workflow.runName ==~ /[a-z]+_[a-z]+/) ){
